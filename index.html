@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Julius Palttala</title>
+</head>
+<script>
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') window.scrollBy({ left: window.innerWidth, behavior: 'smooth' });
+        if (e.key === 'ArrowLeft') window.scrollBy({ left: -window.innerWidth, behavior: 'smooth' });
+    });
+
+</script>
+
+<body>
+    <nav>
+        <h1>Julius Palttala</h1>
+
+    </nav>
+
+    <div class="slides">
+        <section class="Home">
+            <div class="hero">
+                <div class="bubble bubble-big"></div>
+                <div class="bubble bubble-small empty"></div>
+                <div class="bubble bubble-small cv">
+                    <a href="cv.pdf" class="cv-button">Download CV</a>
+                </div>
+            </div>
+        </section>
+        <section class="About">
+            <p>täällä asiaa meikäläisestä</p>
+        </section>
+        <section class="Projects"></section>
+        <section class="Contact"></section>
+    </div>
+
+    <footer>
+
+    </footer>
+</body>
+
+</html>
