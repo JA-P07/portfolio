@@ -5,53 +5,233 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Encode+Sans+SC:wght@100..900&display=swap');
-</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Encode+Sans+SC:wght@100..900&display=swap');
+    </style>
     <title> Julius Palttala</title>
 </head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const navLinks = Array.from(document.querySelectorAll(".navLink"));
+        const cards = Array.from(document.querySelectorAll(".card"));
+
+        if (!cards.length || !navLinks.length) return;
+
+        // Poistaa aktiiviset luokat
+        function clearActiveStates() {
+            navLinks.forEach(link => link.classList.remove("active"));
+            cards.forEach(card => card.classList.remove("current"));
+        }
+
+        function setActive(index) {
+            clearActiveStates();
+            if (navLinks[index]) navLinks[index].classList.add("active");
+            if (cards[index]) cards[index].classList.add("current");
+        }
+
+        // Etsii sen kortin, jonka keskikohta on lähimpänä viewportin keskikohtaa
+        function findClosestCardIndexToViewportCenter() {
+            const viewportCenter = window.innerHeight / 2;
+            let bestIndex = -1;
+            let bestDistance = Infinity;
+            cards.forEach((card, i) => {
+                const rect = card.getBoundingClientRect();
+                const cardCenter = rect.top + rect.height / 2;
+                const distance = Math.abs(cardCenter - viewportCenter);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            });
+            return bestIndex;
+        }
+
+        // Throttle visual updates with requestAnimationFrame
+        let ticking = false;
+        function onScrollOrResize() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const idx = findClosestCardIndexToViewportCenter();
+                    if (idx !== -1) setActive(idx);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // Käynnistetään ensimmäinen asetus (jos käyttäjä on jo korttialueella)
+        onScrollOrResize();
+
+        // Kuunnellaan scroll & resize
+        window.addEventListener("scroll", onScrollOrResize, { passive: true });
+        window.addEventListener("resize", onScrollOrResize);
+
+        // Klikit nav-linkeihin: smooth scroll ja aktivoi heti
+        navLinks.forEach((link, i) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (!cards[i]) return;
+                // scroll so card center aligns to viewport center
+                const rect = cards[i].getBoundingClientRect();
+                const currentScroll = window.scrollY || window.pageYOffset;
+                const cardTop = currentScroll + rect.top;
+                const scrollTo = Math.round(cardTop - (window.innerHeight - rect.height) / 2);
+                window.scrollTo({ top: scrollTo, behavior: "smooth" });
+                setActive(i);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const typewriter = document.getElementById("typewriter");
+
+        const phrases = [
+            "A programmer",
+            "A dual degree student",
+            "An indie developer",
+            "A writer with a distinctive voice"
+        ];
+
+        let phraseIndex = 0;
+        let letterIndex = 1;          // start after the first "A"
+        let typingSpeed = 100;        // ms per letter
+        let deletingSpeed = 50;       // ms per letter when deleting
+        let pauseAfterTyping = 1500;  // ms pause after full phrase
+        let pauseAfterDeleting = 500; // ms pause after deleting
+
+        function typeForward() {
+            const currentPhrase = phrases[phraseIndex];
+            typewriter.textContent = currentPhrase.slice(0, letterIndex + 1);
+            letterIndex++;
+
+            if (letterIndex < currentPhrase.length) {
+                setTimeout(typeForward, typingSpeed);
+            } else {
+                setTimeout(typeBackward, pauseAfterTyping);
+            }
+        }
+
+        function typeBackward() {
+            const currentPhrase = phrases[phraseIndex];
+            // never delete the first character (index 0)
+            if (letterIndex > 1) {
+                typewriter.textContent = currentPhrase.slice(0, letterIndex - 1);
+                letterIndex--;
+                setTimeout(typeBackward, deletingSpeed);
+            } else {
+                // Move to next phrase
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                letterIndex = 1; // reset after "A"
+                setTimeout(typeForward, pauseAfterDeleting);
+            }
+        }
+
+        // Initialize with the first "A" visible
+        typewriter.textContent = "A";
+
+        // Start typing
+        setTimeout(typeForward, typingSpeed);
+    });
+</script>
+
 
 <body>
 
     <nav>
         <h4><b>Julius<br>Palttala</b></h4>
         <div class="links">
-            <a href=""><h3>Github</h3></a>
-            <a href=""><h3>Itch.io</h3></a>
+            <a class="TopLink" href="https://github.com/JA-P07">
+                <h3>Github</h3>
+            </a>
+            <a class="TopLink" href="">
+                <h3>Itch.io</h3>
+            </a>
         </div>
 
     </nav>
     <div class="heroText">
         <h4>The name's Julius Palttala and I am...</h4>
-        <h1>*Insert crazy typewriter here</h1>
+        <h1 id="typewriter"></h1>
     </div>
     <br>
     <div class="content">
-    <a href="">About Me</a>
-    <a href="">My Resume</a>
-    <a href="">Projects</a>
+        <a class="navLink active" href="">About Me</a>
+        <a class="navLink" href="">My Resume</a>
+        <a class="navLink" href="">Projects</a>
     </div>
 
     <div class="wrapper">
-        <section class="card">
+        <section class="card current">
             <div>
                 <h2>About Me</h2>
+                <img class="facePic" src="" alt="Me">
+                <p>I consider myself a man of many talents, having worked in varying environments and industries, such as fast food and security system installation alongside IT. 
+                    In my free time, I like to pactice HEMA (historical European martial arts) and spend time with friends and family. Lately I've been very interested in literature and creative writing, 
+                    and therfore consider both of them as fields of later studies.</p>
             </div>
         </section>
         <section class="card">
             <div>
                 <h2>My Resume</h2>
-            </div>
-        </section>
-        <section class="card">
-            <div>
-                <h2>Projects</h2>
+                <section class="design-section">
+                    <div class="timeline">
+
+                        <!--Well, The reason for this div is to fill space. 
+                    This space is technically used for keeping dates, 
+                    but I didn't find the need for dates. However, I'll provide 
+                    you the styling for dates, so that you can use it if you 
+                    wanted to.-->
+                        <div class="timeline-empty">
+                        </div>
+
+                        <!--This is the class where the timeline graphics are 
+                    housed in. Note that we have timeline-circle 
+                    here for that pointer in timeline.-->
+
+                        <div class="timeline-middle">
+                            <div class="timeline-circle"></div>
+                        </div>
+                        <div class="timeline-component timeline-content">
+                            <h3>HTML</h3>
+                            <p>Some Text</p>
+                        </div>
+                        <div class="timeline-component timeline-content">
+                            <h3>CSS</h3>
+                            <p>Some Text.</p>
+                        </div>
+                        <div class="timeline-middle">
+                            <div class="timeline-circle"></div>
+                        </div>
+                        <div class="timeline-empty">
+                        </div>
+
+                        <div class="timeline-empty">
+                        </div>
+
+                        <div class="timeline-middle">
+                            <div class="timeline-circle"></div>
+                        </div>
+                        <div class=" timeline-component timeline-content">
+                            <h3>Javascript</h3>
+                            <p>Some Text.</p>
+                        </div>
+
+                    </div>
             </div>
         </section>
     </div>
+    </section>
+    <section class="card">
+        <div>
+            <h2>Projects</h2>
+            <p>Nothing... Yet.</p>
+        </div>
+    </section>
+    </div>
 
     <footer>
-        <p>© Julius Palttala 2025</p>
+        <h5>© Julius Palttala 2025</h5>
     </footer>
 </body>
 

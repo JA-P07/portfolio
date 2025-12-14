@@ -1,28 +1,33 @@
-
-
 body {
     height: 100vh;
     margin: 0;
     background: linear-gradient(to bottom, #00385e 0%, rgb(0, 22, 37) 100%);
     background-repeat: no-repeat;
     background-size: cover;
+    overflow: hidden;
+    font-family: "Atkinson Hyperlegible Next", sans-serif;
 
-     font-family: "Atkinson Hyperlegible Next", sans-serif;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     letter-spacing: 0.5px;
 }
 
-nav{
+nav {
     position: sticky;
     top: 0;
     z-index: 100;
     margin: 30px;
     color: whitesmoke;
-    h4{
+
+    h4 {
         font-weight: 800;
-        hr{
+
+        hr {
             text-align: left;
             margin-top: -10px;
             margin-bottom: -2px;
@@ -32,64 +37,172 @@ nav{
     }
 }
 
-.links{
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  a{
-    color: whitesmoke;
-    margin-left: 30px;
-    margin-right: 30px; 
+#typewriter {
+    border-right: 2px solid whitesmoke;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
   }
+  
+  @keyframes blink {
+    0%,50%,100% { border-color: whitesmoke; }
+    25%,75% { border-color: transparent; }
+  }
+  
+  #typewriter {
+    animation: blink 1s infinite;
+  }
+
+.links {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+
+    a {
+        color: whitesmoke;
+        margin-left: 30px;
+        margin-right: 30px;
+    }
 }
 
-.heroText{
+.active,
+.navLink:hover,
+.TopLink:hover {
+    color: rgb(131, 131, 131) !important;
+}
+
+.heroText {
     size: 50px;
     position: absolute;
     left: 20%;
     top: 20%;
     color: whitesmoke;
     font-family: "Atkinson Hyperlegible Next", sans-serif;
-    h4{
-       margin-bottom: -10px;
+
+    h4 {
+        margin-bottom: -10px;
     }
 }
 
-.content{
+.content {
     display: flex;
     flex-direction: row;
     color: whitesmoke;
     position: absolute;
     left: 20%;
     top: 35%;
-    a{
+
+    a {
         color: whitesmoke;
         margin-right: 1.5rem;
     }
 }
 
-.wrapper{
+.wrapper {
+    position: absolute;
     margin: 0 auto;
     max-height: 100vh;
-    max-width: 80%;
+    width: 70%;
+    left: 18%;
     top: 40%;
+    display: flex;
+    flex-direction: column;
 }
 
-.card{
-    background-color: whitesmoke;
+.card {
+    color: whitesmoke;
+    background-color: rgba(0, 0, 0, 0.308);
     border-radius: 25px;
     padding: 20px;
     margin: 20px;
+    display: none;
+    overflow-y: auto;
+    height: 50vh;
+    scrollbar-width: none;
 }
 
-footer{
-    position: absolute;
+.current {
+    display: block;
+}
+
+.design-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px 0;
+  }
+  
+  .design {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .timeline {
+    width: 80%;
+    height: auto;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .timeline-content {
+    padding: 20px;
+    background: rgba(245, 245, 245, 0.308);
+    border-radius: 5px;
+    color: whitesmoke;
+    padding: 1.75rem;
+    transition: 0.4s ease;
+    overflow-wrap: break-word !important;
+    margin: 1rem;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  
+  .timeline-component {
+    margin: 0px 20px 20px 20px;
+  }
+  
+  @media screen and (min-width: 768px) {
+    .timeline {
+      display: grid;
+      grid-template-columns: 1fr 3px 1fr;
+    }
+    .timeline-middle {
+      position: relative;
+      background-image: linear-gradient(45deg, #F27121, #E94057, #8A2387);
+      width: 3px;
+      height: 100%;
+    }
+    .main-middle {
+      opacity: 0;
+    }
+    .timeline-circle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-image: linear-gradient(45deg, #F27121, #E94057, #8A2387);
+      -webkit-transform: translateX(-50%);
+              transform: translateX(-50%);
+    }
+  }
+
+footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     bottom: 0;
+    position: absolute;
     margin: 30px;
     color: whitesmoke;
     font-weight: 800;
-
 }
