@@ -51,7 +51,20 @@ nav h4 hr {
   gap: 60px;
 }
 
+.links2 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 60px;
+  margin-top: 50px;
+}
+
 .links a {
+  color: whitesmoke;
+}
+
+.links2 a{
   color: whitesmoke;
 }
 
@@ -358,154 +371,147 @@ footer {
   font-weight: 800;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
+
+@media (max-width: 1280px) {
+
+  html,
   body {
+    height: 100%;
     overflow: hidden;
   }
 
-  nav {
-    margin: 16px;
+  .wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    width: 100%;
+    max-height: 70vh;
+
+    margin: 0;
+    padding: 0;
+
+    z-index: 999;
+    pointer-events: auto;
   }
 
-  .links {
-    position: static;
-    justify-content: flex-start;
-    margin-top: 10px;
+  .card {
+    display: none;
+    height: 70vh;
+    overflow-y: auto;
+
+    margin: 0;
+    border-radius: 25px 25px 0 0;
   }
 
+  .card.current {
+    display: block;
+  }
+
+  /* Hero & nav spacing */
   .heroText {
     position: static;
-    margin: 40px 20px 20px;
+    margin: 60px 20px 10px;
   }
 
   .content {
     position: static;
-    margin: 0 20px 20px;
-    flex-wrap: wrap;
-    gap: 12px;
+    margin: 10px 20px;
+    gap: 1rem;
   }
 
-  .wrapper {
-    position: static;
-    width: 100%;
-    left: 0;
+  nav {
+    margin: 20px;
+  }
+
+  .links {
+    position: absolute;
     top: 0;
+    right: 0;
+    display: flex;
+    gap: 30px;
   }
 
-  .card {
-    max-width: 90%;
-    margin: 12px;
-    height: auto;
+
+  .about {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .skillsText {
+    margin-top: -100px;
+  }
+
+  .skills {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
   }
 
   .facePic {
     position: static;
-    display: block;
-    max-width: 150px;
-    margin: 0 auto 20px;
+    max-width: 400px;
+    width: auto;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    padding: 0;
   }
 
   .ProfileText {
+    margin-top: -100px;
+    grid-column: 1 / -1;
     max-width: 100%;
-    font-size: 1rem;
   }
 
-  .resume-layout {
-    grid-template-columns: 2fr;
-  }
-
-  .resume-detail {
-    display: none;
-  }
-
-  .timeline {
-    padding-left: 60px;
-    height: auto;
-    overflow: hidden;
-  }
-
-  .timeline::before {
-    left: 30px;
-  }
-
-  .timeline-block {
-    position: relative;
-    left: 0;
-    width: 100%;
-    top: auto;
-    height: auto;
-  }
-
-  .year-label {
-    left: -10px;
-  }
-
-  .filters {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+  /* PROJECTS */
   .projects {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    justify-items: center;
+    align-items: stretch;
+    gap: 20px;
   }
+
 
   footer {
     display: none;
   }
 }
 
-@media (max-width: 750px) {
-  body {
-    overflow: hidden;
-  }
 
-  nav {
-    margin: 16px;
-  }
-
-  .links {
-    position: static;
-    justify-content: flex-start;
-    margin-top: 10px;
-  }
-
-  .heroText {
-    position: static;
-    margin: 40px 20px 20px;
-  }
-
-  .content {
-    position: static;
-    margin: 0 20px 20px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
+@media (max-width: 768px) {
   .wrapper {
-    position: static;
-    width: 100%;
-    left: 0;
-    top: 0;
+    max-height: 75vh;
   }
 
   .card {
-    max-width: 90%;
-    margin: 12px;
-    height: auto;
+    height: 75vh;
+  }
+
+  /* ABOUT */
+  .about {
+    grid-template-columns: 1fr;
   }
 
   .facePic {
     position: static;
-    display: block;
-    max-width: 150px;
-    margin: 0 auto 20px;
+    max-width: 220px;
+    width: auto;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    margin: 0 auto;
+    padding: 0;
   }
 
-  .ProfileText {
-    max-width: 100%;
-    font-size: 1rem;
+  .skills {
+    grid-template-columns: auto auto;
   }
 
+  /* RESUME: detail excluded */
   .resume-layout {
     grid-template-columns: 1fr;
   }
@@ -514,34 +520,10 @@ footer {
     display: none;
   }
 
-  .timeline {
-    padding-left: 60px;
-    height: auto;
-    overflow: hidden;
-  }
-
-  .timeline::before {
-    left: 30px;
-  }
-
-  .timeline-block {
-    position: relative;
-    left: 0;
-    width: 100%;
-    top: auto;
-    height: auto;
-  }
-
-  .year-label {
-    left: -10px;
-  }
-
-  .filters {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+  /* PROJECTS */
   .projects {
     grid-template-columns: 1fr;
+    justify-content: center;
   }
 
   footer {

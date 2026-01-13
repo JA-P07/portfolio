@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Encode+Sans+SC:wght@100..900&display=swap');
+    </style>
+    <title> Julius Palttala</title>
+</head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const navLinks = Array.from(document.querySelectorAll(".navLink"));
+        const cards = Array.from(document.querySelectorAll(".card"));
+
+        if (!cards.length || !navLinks.length) return;
+
+        // Poistaa aktiiviset luokat
+        function clearActiveStates() {
+            navLinks.forEach(link => link.classList.remove("active"));
+            cards.forEach(card => card.classList.remove("current"));
+        }
+
+        function setActive(index) {
+            clearActiveStates();
+            if (navLinks[index]) navLinks[index].classList.add("active");
+            if (cards[index]) cards[index].classList.add("current");
+        }
+
+        // Etsii sen kortin, jonka keskikohta on lähimpänä viewportin keskikohtaa
+        function findClosestCardIndexToViewportCenter() {
+            const viewportCenter = window.innerHeight / 2;
+            let bestIndex = -1;
+            let bestDistance = Infinity;
+            cards.forEach((card, i) => {
+                const rect = card.getBoundingClientRect();
+                const cardCenter = rect.top + rect.height / 2;
+                const distance = Math.abs(cardCenter - viewportCenter);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            });
+            return bestIndex;
+        }
+
+        // Throttle visual updates with requestAnimationFrame
+        let ticking = false;
+        function onScrollOrResize() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const idx = findClosestCardIndexToViewportCenter();
+                    if (idx !== -1) setActive(idx);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // Käynnistetään ensimmäinen asetus (jos käyttäjä on jo korttialueella)
+        onScrollOrResize();
+
+        // Kuunnellaan scroll & resize
+        window.addEventListener("scroll", onScrollOrResize, { passive: true });
+        window.addEventListener("resize", onScrollOrResize);
+
+        // Klikit nav-linkeihin: smooth scroll ja aktivoi heti
+        navLinks.forEach((link, i) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (!cards[i]) return;
+                // scroll so card center aligns to viewport center
+                const rect = cards[i].getBoundingClientRect();
+                const currentScroll = window.scrollY || window.pageYOffset;
+                const cardTop = currentScroll + rect.top;
+                const scrollTo = Math.round(cardTop - (window.innerHeight - rect.height) / 2);
+                window.scrollTo({ top: scrollTo, behavior: "smooth" });
+                setActive(i);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const typewriter = document.getElementById("typewriter");
+
+        const phrases = [
+            "Ohjelmistokehittäjä",
+            "Indie-kehittäjä",
+            "Kaksoistutkinto-opiskelija",
+            "Kirjoittaja omaleimaisella äänellä"
+        ];
+
+        let phraseIndex = 0;
+        let letterIndex = 1;          // start after the first "A"
+        let typingSpeed = 100;        // ms per letter
+        let deletingSpeed = 50;       // ms per letter when deleting
+        let pauseAfterTyping = 1500;  // ms pause after full phrase
+        let pauseAfterDeleting = 500; // ms pause after deleting
+
+        function typeForward() {
+            const currentPhrase = phrases[phraseIndex];
+            typewriter.textContent = currentPhrase.slice(0, letterIndex + 1);
+            letterIndex++;
+
+            if (letterIndex < currentPhrase.length) {
+                setTimeout(typeForward, typingSpeed);
+            } else {
+                setTimeout(typeBackward, pauseAfterTyping);
+            }
+        }
+
+        function typeBackward() {
+            const currentPhrase = phrases[phraseIndex];
+            // never delete the first character (index 0)
+            if (letterIndex > 0) {
+                typewriter.textContent = currentPhrase.slice(0, letterIndex - 1);
+                letterIndex--;
+                setTimeout(typeBackward, deletingSpeed);
+            } else {
+                // Move to next phrase
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                letterIndex = 1; // reset after "A"
+                setTimeout(typeForward, pauseAfterDeleting);
+            }
+        }
+
+        // Start typing
+        setTimeout(typeForward, typingSpeed);
+    });
+
+    // Project filter:
+    document.addEventListener("DOMContentLoaded", () => {
+        const filterButtons = document.querySelectorAll(".filter");
+        const projects = document.querySelectorAll(".project-item");
+
+        filterButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const filter = button.dataset.filter;
+
+                // Update active state
+                filterButtons.forEach(b => b.classList.remove("active"));
+                button.classList.add("active");
+
+                projects.forEach(project => {
+                    const tags = project.dataset.tags.split(" ");
+
+                    if (filter === "all" || tags.includes(filter)) {
+                        project.style.display = "block";
+                    } else {
+                        project.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const blocks = document.querySelectorAll(".timeline-block");
+        const detail = document.getElementById("resumeDetail");
+
+        blocks.forEach(block => {
+            block.addEventListener("mouseenter", () => {
+                const title = block.dataset.title;
+                const description = block.dataset.description;
+                const learned = block.dataset.learned;
+
+                detail.innerHTML = `
+        <h3>${title}</h3>
+        <p>${description}</p>
+        <h4>Mitä opin</h4>
+        <ul>
+          ${learned.split(",").map(item => `<li>${item.trim()}</li>`).join("")}
+        </ul>
+      `;
+            });
+        });
+    });
+
+
+</script>
+
+
+<body>
+
+    <nav>
+        <h4><b>Julius<br>Palttala</b></h4>
+        <div class="links">
+            <a class="TopLink" href="https://github.com/JA-P07">
+                <h3>Github</h3>
+            </a>
+            <a class="TopLink" href="https://caesarstriumph.itch.io/">
+                <h3>Itch.io</h3>
+            </a>
+            <a class="TopLink" href="https://caesarstriumph.itch.io/">
+                <h3>LinkedIn</h3>
+            </a>
+        </div>
+        <br>
+        <div class="links2">
+            <a class="TopLink" href="index-en.html">
+                <h3>
+                    <img src="/media/united-kingdom-flag-button-square-icon-16.png" alt="EN"> Englanniksi - In English
+                </h3>
+            </a>
+        </div>
+
+    </nav>
+    <div class="heroText">
+        <h4>Nimeni on Julius Palttala ja olen...</h4>
+        <h1 id="typewriter"></h1>
+    </div>
+    <br>
+    <div class="content">
+        <a class="navLink active" href="#about">Lisää Minusta</a>
+        <a class="navLink" href="#resume">Ansioluetteloni</a>
+        <a class="navLink" href="#prpjects">Projektini</a>
+    </div>
+
+    <div class="wrapper">
+        <section class="card current">
+            <div class="about">
+                <h2>Lisää Minusta</h2>
+                <h3 class="skillsText">Kokemus / Taidot:</h3>
+                <div class="skills">
+
+                    <div class="skillbox">
+                        <h4><u>Frontend & Web</u></h4>
+                        <ul>
+                            <li>-> HTML</li>
+                            <li>-> CSS</li>
+                            <li>-> JavaScript</li>
+                        </ul>
+                    </div>
+
+                    <div class="skillbox">
+                        <h4><u>Backend & Ohjelmointi</u></h4>
+                        <ul>
+                            <li>-> C#</li>
+                            <li>-> PHP</li>
+                            <li>-> SQL</li>
+                            <li>-> Node.js</li>
+                        </ul>
+                    </div>
+
+                    <div class="skillbox">
+                        <h4><u>Frameworkit & Moottorit</u></h4>
+                        <ul>
+                            <li>-> React</li>
+                            <li>-> Unity</li>
+                            <li>-> Godot</li>
+                        </ul>
+                    </div>
+
+                    <div class="skillbox">
+                        <h4><u>Työkalut & Muuta</u></h4>
+                        <ul>
+                            <li>-> Git</li>
+                            <li>-> GitHub</li>
+                        </ul>
+                    </div>
+                </div>
+                <img class="facePic" src="\media\profilePicGreyscale.jpg" alt="Me">
+                <p class="ProfileText">Uskaltaisin väittää olevani monitaitoinen tekijä, kiitos ikäisekseni laajan
+                    työkokemukseni
+                    erilaisilla aloilla. Olen esimerkiksi työskennellyt ravintolassa sekä turvallisuus-alan yrityksessä
+                    IT:n ja teknologian lisäksi.
+                    Vapaa-ajallani harrastan historiallista miekkailua ja vietän aikaa ystävien sekä perheen kanssa.
+                    Olen
+                    viimeiaikoina myös ollut kiinnostunut kirjallisuudesta sekä luovasta kirjoittamisesta, ja
+                    harkitsenkin kummankin aiheen jatko-opintoja.
+                    <br>
+                    <br>
+                    <br>
+                    Herätinkö kiinnostuksen? Voit ladata ansioluetteloni <a href="">tästä linkistä.</a>
+                </p>
+        </section>
+        <section class="card resume">
+            <h2>Ansioluetteloni</h2>
+            <div class="resume-layout">
+                <section class="timeline">
+
+                    <div class="year-label" style="--year: 2023">2023</div>
+                    <div class="year-label" style="--year: 2024">2024</div>
+                    <div class="year-label" style="--year: 2025">2025</div>
+                    <div class="year-label" style="--year: 2026">2026</div>
+                    <div class="year-label" style="--year: 2027">2027</div>
+
+
+                    <div class="timeline-block work" style="--start: 2023.25; --end: 2023.5;"
+                        data-title="Restaurant assistant at Kotipizza Oyj."
+                        data-description="Työskentelin kesällä 2023 Kotipizzassa saliapulaisena Tampereen kaupungin kesätyösetelin kautta. Se opetti minulle, kuinka rankkoja asiakaspalvelu ja ravintola-ala oikeasti ovat."
+                        data-learned="Vaikeiden asiakkaiden kanssa työskentelyä, Rahan käsittelyä, Hygienian tärkeyden, Työskentelemään paineen alla">
+                        <h4>Saliapulainen - Kotipizza Oyj</h4>
+                    </div>
+
+                    <div class="timeline-block education" style="--start: 2023.75; --end: 2026.5;"
+                        data-title="Dual Degree in Software Development + A-level (ongoing)"
+                        data-description="Tämänhetkinen koulutukseni, ideana olisi valmistua kesällä 2026."
+                        data-learned="Fullstack kehitystä, Tietokantojen käyttöä, Kyberturvallisuutta, Sovellusarkkitehtuuria, Dokumentaatiota, Ongelmanratkontaa">
+                        <h3>Tieto- ja viestintätekniikan perustutkinto + ylioppilastutkinto - Tampereen seudun
+                            ammattiopisto Tredu & Tampereen teknillinen lukio</h3>
+                    </div>
+
+                    <div class="timeline-block work" style="--start: 2024.75; --end: 2025;"
+                        data-title="Internship at Missing-Link OY"
+                        data-description="Kahden kuukauden mittainen työssäoppijakso loppuvuodesta 2024. Siellä tutustuin IT-alan käytäntöihin ja töihin kunnolla, pääsin kirjoittamaan käyttöoppaita yrityksen tuotteelle, kartoittamaan sovelluksen rakennetta sekä työskentelemään WordPressin kanssa."
+                        data-learned="Dokumentaatiota, Ongelmanratkaisua, Kommunikaatiota, Työskentelyä oikeassa ympäristössä">
+                        <h4>Työharjoittelija - Missing-Link Oy</h4>
+                    </div>
+
+                    <div class="timeline-block work" style="--start: 2025.5; --end: 2025.75;"
+                        data-title="Security system installer at SmartLoq OY"
+                        data-description="Kesätyö vuonna 2025, pääasiallisesti palovarottimien asentelua asiakkaiden koteihin, joukkoon mahtui myös pari keikkaa, joilla asennettiin ovipuhelimia ja ilmansuodattimia."
+                        data-learned="Kenttätyötä, Vastuuta, Laitteiden asentamista, Tehokasta työskentelyä">
+                        <h4>Turvajärjestelmä-asentaja - SmartLoq Oy</h4>
+                    </div>
+
+                </section>
+
+                <aside class="resume-detail" id="resumeDetail">
+                    <h3>Siirrä kursori merkinnän päälle nähdäksesi yksityiskohtia</h3>
+                    <p><- <- <-</p>
+                </aside>
+            </div>
+
+        </section>
+        <section class="card">
+            <h2>Projects</h2>
+            <ul class="filters">
+                <li><button class="filter active" data-filter="all">Kaikki</button></li>
+                <li><button class="filter" data-filter="web">Fullstack / Web</button></li>
+                <li><button class="filter" data-filter="js">JS</button></li>
+                <li><button class="filter" data-filter="react">React</button></li>
+                <li><button class="filter" data-filter="csharp">C#</button></li>
+                <li><button class="filter" data-filter="game">Game</button></li>
+
+            </ul>
+
+            <div class="projects">
+                <div class="project-item" data-tags="web js">
+                    <h3>Portfolioni</h3>
+                    <p>Jep, juurikin se sivu mitä tällä hetkellä luet, lähdekoodi alla! <br><br>
+                        Portfolioni toimii todisteena taidoistani front-end kehituksessä mahdollisimman vähäisillä
+                        työkaluilla.
+                    </p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a href="">Lähdekoodi</a></li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>Web</li>
+                            <li>CSS</li>
+                            <li>JS</li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="project-item" data-tags="game csharp">
+                    <h3>The Duelist</h3>
+                    <p>Ensimmäinen kunnollinen indie-pelini, se on reaktio- ja vuoropohjainen strategiapeli, mikä ottaa
+                        suuren määrän inspiraatiota pelistä Clair Obscur: Expedition 33 sekä Bolognalaisesta
+                        miekkailutyylistä. Pelissä on pixel-art grafiikat, sekä retromainen UI.</p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a href="https://caesarstriumph.itch.io/the-duelist">Avaa tämä projekti</a></li>
+                            <li><a href="https://github.com/JA-P07/The-Duelist_main">Lähdekoodi</a></li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>C#</li>
+                            <li>Game</li>
+                            <li>Unity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="project-item" data-tags="game csharp">
+                    <h3>EPIC 3D ball game</h3>
+                    <p>Pieni 3D-demo Unityllä, mitä oli yllättävän hauska kehittää. Se sisältää hienoja mekaniikoita,
+                        esimerkiksi napeilla avattavia ovia ja katkeavia lankkuja.</p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a
+                                    href="https://play.unity.com/en/games/03ebfca7-aa51-46f5-8dd4-2a75674cafd3/webgl-builds">Avaa
+                                    tämä projekti</a></li>
+                            <li><a href="">Lähdekoodi</a></li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>C#</li>
+                            <li>Game</li>
+                            <li>Unity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="project-item" data-tags="game csharp">
+                    <h3>Space Invaders -kopio</h3>
+                    <p>Koulutehtävänä syksyllä 2025 tehty projekti. Se pitää sisällään esimerkiksi Score- ja Highscore
+                        mekaniikat sekä progressiivisen vaikeustason.
+                    <p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a
+                                    href="https://play.unity.com/en/games/97a69dd4-ca47-48c9-aae3-cd692535e244/caesars-space-game">Avaa
+                                    tämä projekti</a></li>
+                            <li><a href="">Lähdekoodi</a></li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>C#</li>
+                            <li>Game</li>
+                            <li>Unity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="project-item" data-tags="web react js">
+                    <h3>MtgWhiteFish - Fanikauppa</h3>
+                    <p>Reactilla alkuvuodesta 2025 tehty yksisivuinen verkko-ohjelma. Se käyttää simppeliä
+                        JSON-tiedostoa tietokantana tuotteien kuville ja muille yksityiskohdille</p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a href="https://ja-p07.github.io/fanShop/">Avaa tämä projekti</a></li>
+                            <li><a href="https://github.com/tredu/react-JA-P07/tree/main/fanikauppa">Lähdekoodi</a>
+                            </li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>React</li>
+                            <li>CSS</li>
+                            <li>JS</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="project-item" data-tags="web js">
+                    <h3>404-Hackathon</h3>
+                    <p>Toukokuussa 2024 kahden muun opiskelijan kanssa toteutettu Hackathon-projekti. Se sisältää
+                        ajalleen hyvää animaatiota sekä kaikenlaisia hauskoja ominaisuuksia, mitä en aio tässä
+                        paljastaa...
+                    </p>
+                    <div class="project-bottom">
+                        <ul class="link-list">
+                            <li><a href="https://ja-p07.github.io/Hackathon_404/">Avaa tämä projekti</a></li>
+                            <li><a href="https://github.com/JA-P07/Hackathon_404">Lähdekoodi</a></li>
+                        </ul>
+                        <ul class="taglist">
+                            <li>Web</li>
+                            <li>CSS</li>
+                            <li>JS</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+    </section>
+    </div>
+
+    <footer>
+        <h5>© Julius Palttala 2025</h5>
+    </footer>
+</body>
+
+</html>
