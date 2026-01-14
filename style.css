@@ -199,7 +199,6 @@ nav h4 hr {
   grid-template-columns: 2fr 1.3fr;
   gap: clamp(16px, 3vw, 32px);
   height: 100%;
-  overflow-y: hidden;
 }
 
 .resume-detail {
@@ -217,19 +216,11 @@ nav h4 hr {
   position: relative;
   padding-left: 100px;
   height: 100%;
-  overflow-y: none;
+  overflow-y: auto;
   scrollbar-width: none;
 }
 
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 60px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: whitesmoke;
-}
+
 
 .timeline-block {
   position: absolute;
@@ -244,6 +235,8 @@ nav h4 hr {
   justify-content: flex-start;
   top: calc((var(--start) - 2023) * 150px);
   height: calc((var(--end) - var(--start)) * 150px);
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .timeline-block.education {
@@ -284,6 +277,7 @@ nav h4 hr {
   grid-template-columns: auto auto auto;
   gap: 20px;
   justify-content: space-around;
+  margin-bottom: 50px;
 }
 
 .project-item {
@@ -292,7 +286,8 @@ nav h4 hr {
   border: 2px solid white;
   padding: 20px;
   max-width: 35vh;
-  height: 30vh;
+  max-height: 45vh;
+  min-height: 30vh;
   display: flex;
   flex-direction: column;
 }
